@@ -1,7 +1,6 @@
 #This program will pop up a UI that allows you to input credentials for a password management system, and then stores the information in a text file.
 
-import random, tkinter, tkinter.messagebox
-
+import random, tkinter, tkinter.messagebox, pyperclip, json
 FONT_NAME = "Bookman Old Style"
 
 #Creation of Window UI
@@ -24,13 +23,14 @@ def generatePassword():
     generatedPassword = ""
     lastChar = None
     #Creates a 18 character long password that doesn't allow two same characters in a row
-    for i in range(18):
+    for i in range(16):
         addedChar = random.choice(passwordOptionsList)
         while addedChar == lastChar:
             addedChar = random.choice(passwordOptionsList)
         generatedPassword += addedChar
         lastChar = addedChar
     passwordEntry.delete(0,'end')
+    pyperclip.copy(generatedPassword)
     passwordEntry.insert(0,generatedPassword)
 
 #Add credentials to a file
@@ -42,8 +42,28 @@ def addData():
     elif len(passwordEntry.get()) == 0:
         popUpMessage("You forgot to add a password.")
     else:
-        with open("data.txt", "a") as dataFile:
-            dataFile.write(websiteEntry.get() + " | " + usernameEntry.get() + " | " + passwordEntry.get() + "\n")
+        newData = {
+            websiteEntry.get(): {
+                "email": usernameEntry.get(),
+                "password": passwordEntry.get(),
+            }
+        }
+        try:
+            with open("data.json", "r") as dataFile:
+                #dataFile.write(websiteEntry.get() + " | " + usernameEntry.get() + " | " + passwordEntry.get() + "\n")
+                #^old, keeping just in case
+                #puts json file into dict
+                data = json.load(dataFile)
+                #Puts new data into the dictionary
+                data.update(newData)
+            with open("data.json", "w") as dataFile:
+                #Saves new data
+                json.dump(data, dataFile, indent=4)
+                # json.dump(new_data,dataFile, indent=4)
+        except (json.decoder.JSONDecodeError, FileNotFoundError):
+            #if the data.json file doesn't exist, it will just create it with the data
+            with open("data.json", "w") as dataFile:
+                json.dump(newData,dataFile)
         passwordEntry.delete(0,'end')
         websiteEntry.delete(0,'end')
 
