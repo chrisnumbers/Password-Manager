@@ -1,10 +1,10 @@
 {
-    "creatingtesting": {
-        "email": "chris",
-        "password": "SDzPzQ3y5ym4F49c"
+    "WebsiteName": {
+        "email": "UserName",
+        "password": "Pass"
     },
-    "fff": {
-        "email": "chris",
-        "password": "6jSK6oQyOeUIvQAu"
+    "Website2": {
+        "email": "Username2",
+        "password": "Pass2"
     }
 }

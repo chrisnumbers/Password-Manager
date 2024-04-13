@@ -56,14 +56,16 @@ def addData():
                 data = json.load(dataFile)
                 #Puts new data into the dictionary
                 data.update(newData)
-            with open("data.json", "w") as dataFile:
-                #Saves new data
-                json.dump(data, dataFile, indent=4)
-                # json.dump(new_data,dataFile, indent=4)
-        except (json.decoder.JSONDecodeError, FileNotFoundError):
+        except FileNotFoundError:
+            data = newData
+        with open("data.json", "w") as dataFile:
+            #Saves new data
+            json.dump(data, dataFile, indent=4)
+            # json.dump(new_data,dataFile, indent=4)
+        #except (json.decoder.JSONDecodeError, FileNotFoundError):
             #if the data.json file doesn't exist, it will just create it with the data
-            with open("data.json", "w") as dataFile:
-                json.dump(newData,dataFile)
+            #with open("data.json", "w") as dataFile:
+                #json.dump(newData,dataFile)
         passwordEntry.delete(0,'end')
         websiteEntry.delete(0,'end')
 
