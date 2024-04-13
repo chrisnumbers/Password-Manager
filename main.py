@@ -1,7 +1,7 @@
 #This program will pop up a UI that allows you to input credentials for a password management system, and then stores the information in a text file.
 
 import random, tkinter, tkinter.messagebox, pyperclip, json
-FONT_NAME = "Bookman Old Style"
+FONT_NAME = "Arial"
 
 #Creation of Window UI
 window = tkinter.Tk()
@@ -50,22 +50,17 @@ def addData():
         }
         try:
             with open("data.json", "r") as dataFile:
-                #dataFile.write(websiteEntry.get() + " | " + usernameEntry.get() + " | " + passwordEntry.get() + "\n")
-                #^old, keeping just in case
                 #puts json file into dict
                 data = json.load(dataFile)
                 #Puts new data into the dictionary
                 data.update(newData)
         except FileNotFoundError:
+            #If the file doesn't exist, just create a new one with this entry
             data = newData
         with open("data.json", "w") as dataFile:
             #Saves new data
             json.dump(data, dataFile, indent=4)
-            # json.dump(new_data,dataFile, indent=4)
-        #except (json.decoder.JSONDecodeError, FileNotFoundError):
-            #if the data.json file doesn't exist, it will just create it with the data
-            #with open("data.json", "w") as dataFile:
-                #json.dump(newData,dataFile)
+        #Empties the password and website entries
         passwordEntry.delete(0,'end')
         websiteEntry.delete(0,'end')
 
@@ -73,6 +68,26 @@ def addData():
 #Pop up message if there is an issue 
 def popUpMessage(message):
     popUp = tkinter.messagebox.showinfo("Error", message)
+
+
+def search():
+    try:
+        with open("data.json", "r") as dataFile:
+            data = json.load(dataFile)
+        website = websiteEntry.get()
+        if website in data.keys():
+            specificSite = data.get(website)
+            user = specificSite.get("email")
+            password = specificSite.get("password")
+            tkinter.messagebox.showinfo("Credentials Info", "Email/Username: " + user + "\nPassword: " + password)
+        elif len(websiteEntry.get()) == 0:
+            pass
+        else:
+            tkinter.messagebox.showinfo("Entry not found", "There is no entry for " + website)
+
+    except FileNotFoundError:
+        tkinter.messagebox.showinfo("You do not have a data file.")
+
 
 
 #Left Side Text
@@ -86,14 +101,18 @@ passwordText = tkinter.Label(text="Password:", font =(FONT_NAME, 10))
 passwordText.grid(column=0,row=3)
 
 #User Input Text Boxes
-websiteEntry = tkinter.Entry(width=40)
-websiteEntry.grid(column=1,row=1, columnspan=2)
+websiteEntry = tkinter.Entry(width=24)
+websiteEntry.grid(column=1,row=1, columnspan=1)
 websiteEntry.focus()
-usernameEntry = tkinter.Entry(width=40)
+usernameEntry = tkinter.Entry(width=36)
 usernameEntry.grid(column=1,row=2, columnspan=2)
 
 passwordEntry = tkinter.Entry(width=24)
 passwordEntry.grid(column=1,row=3)
+
+#Search Button
+searchButton = tkinter.Button(text="Search",font=(FONT_NAME,10), command=search)
+searchButton.grid(column=2,row=1)
  
 #Password Button
 generatePasswordButton = tkinter.Button(text="Generate", font=(FONT_NAME, 10), command=generatePassword)
